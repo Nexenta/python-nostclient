@@ -40,7 +40,7 @@ def action(parser, args):
         ('key', 'Key', 'Key for obtaining an auth token',
          (NotEmptyValidator('Please define key'), ))
     ]
-    print >> sys.stdout, 'Configure csclient.'
+    print >> sys.stdout, 'Configure nostclient.'
     print >> sys.stdout, 'Enter new values or accept defaults in brackets ' \
                          'with Enter.'
     print >> sys.stdout

@@ -1,5 +1,5 @@
 configure [options]
-    Save configs to config file, default file path is /home/arma/.csclient.
+    Save configs to config file, default file path is /home/arma/.nostclient.
         -c --config-file - path to config file for saving configures.
 
 stat [container] [manifest]

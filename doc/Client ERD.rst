@@ -1,5 +1,5 @@
 1. INTRODUCTION:
-CloudStorage client (csclient) is a python client for the extended access to NexentaSwift over CCOW API.
+NOST client (nostclient) is a python client for the extended access to NexentaSwift over CCOW API.
 
 2. DESCRIPTION:
 One of the client possibilities is using multi-threading for file upload and download. Each file  can be divided into small pieces (chunks) and loaded separately. User can choose the size of the chunk or it will be assigned automatically. 

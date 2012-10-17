@@ -1,1 +1,1 @@
-""" Code common to all of csclient. """
+""" Code common to all of nostclient. """

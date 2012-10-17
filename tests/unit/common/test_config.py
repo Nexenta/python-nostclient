@@ -19,7 +19,7 @@ class TestConfig(unittest.TestCase):
         rmtree(self.tmp_dir)
 
     def test_config(self):
-        cfg_path = os.path.join(self.tmp_dir, '.csclient')
+        cfg_path = os.path.join(self.tmp_dir, '.nostclient')
         cfg = Config(cfg_path)
         self.assertEqual(cfg.auth_url, DEFAULT_AUTH_URL)
         self.assertEqual(cfg.auth_version, '1.0')
@@ -31,7 +31,7 @@ class TestConfig(unittest.TestCase):
         cfg.key = 'admin'
         cfg.not_in_config_parameter = '123'
         cfg.save_config()
-        self.assertEquals(os.listdir(self.tmp_dir), ['.csclient'])
+        self.assertEquals(os.listdir(self.tmp_dir), ['.nostclient'])
         self.assertTrue(os.path.exists(cfg_path))
 
         cfg = Config(cfg_path)

@@ -2,7 +2,7 @@
 
 import os
 
-SCRIPT_NAME = 'csclient'
+SCRIPT_NAME = 'nost'
 
 EMPTY_VALUES = ('', None, 0, [], {}, (), set())
 
@@ -21,7 +21,7 @@ CANNED_ACP_VALUES = ('private', 'public-read', 'public-read-write',
 # default authorization url
 DEFAULT_AUTH_URL = 'http://127.0.0.1:8080/auth/v1.0/'
 # default config file path
-DEFAULT_CONFIG_PATH = os.path.abspath(os.path.expanduser('~/.csclient'))
+DEFAULT_CONFIG_PATH = os.path.abspath(os.path.expanduser('~/.nostclient'))
 # default section for csclient config
 CONFIG_SECTION = 'CONFIG'
 

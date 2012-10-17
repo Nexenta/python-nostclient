@@ -11,7 +11,7 @@ from nostclient.common.utils import cast_value
 
 class ConfigData(object):
     """
-    Class for storing csclient configuration parameters
+    Class for storing nostclient configuration parameters
 
     To add new configuration parameter just define it in ConfigData
     declaration.

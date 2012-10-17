@@ -23,7 +23,7 @@ def is_true(v):
     return v.lower() in TRUE_VALUES
 
 
-def get_logger(name='csclient_logger', log_level='INFO'):
+def get_logger(name='nostclient_logger', log_level='INFO'):
     """Return properly configurated logger instance"""
     logger = logging.getLogger(name=name)
 

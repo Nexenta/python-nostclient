@@ -58,7 +58,7 @@ Commands:
 
 %(acl)s""".strip('\n') % usage
 
-parser = OptionParser(usage=USAGE, prog='csclient', version=version)
+parser = OptionParser(usage=USAGE, prog='nostclient', version=version)
 
 parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
     metavar='VERBOSE', default=False, help='write debug messages to console')
