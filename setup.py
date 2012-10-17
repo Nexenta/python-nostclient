@@ -6,13 +6,10 @@ from setuptools import setup, find_packages
 from nostclient import __canonical_version__ as version
 
 
-name = 'csclient'
-
-
 setup(
-    name=name,
+    name='nostclient',
     version=version,
-    description='Cloudstorag console client',
+    description='Nost console client',
     license='Apache License (2.0)',
     author='Nexenta Systems Inc.',
     author_email='victor.rodionov@nexenta.com',
@@ -27,6 +24,6 @@ setup(
         ],
     install_requires=[],
     scripts=[
-        'bin/csclient'
+        'bin/nost'
     ]
 )
