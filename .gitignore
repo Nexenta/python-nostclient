@@ -1,0 +1,6 @@
+.idea
+*.pyc
+csclient.egg-info
+.coverage
+coverage.xml
+report.xml

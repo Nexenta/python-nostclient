@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+# Copyright 2012 Nexenta Systems Inc.
+
+import sys
+
+if tuple(sys.version_info) < (2, 6, 0):
+    sys.stderr.write("ERROR: Python 2.6 or higher required.\n")
+    sys.exit(1)
+
+from optparse import OptionParser
+
+from nostclient import __canonical_version__ as version
+from nostclient.common.constants import DEFAULT_CONFIG_PATH, ERROR_CODE, \
+    SCRIPT_NAME
+from nostclient.common.exceptions import AuthorizationError, ServiceError
+from nostclient.commands import configure, stat, download, list, upload, \
+    delete, versioning, acl
+
+
+CMDS = {
+    'configure': configure,
+    'download': download,
+    'stat': stat,
+    'list': list,
+    'upload': upload,
+    'delete': delete,
+    'versioning': versioning,
+    'acl': acl
+}
+
+usage = {'script_name': SCRIPT_NAME}
+
+max_cmd = max([len(i) for i in CMDS]) + 1
+
+for cmd in CMDS:
+    u = CMDS[cmd].USAGE
+    value = ''.join(u.split('\n')[1:])
+    usage[cmd] = '%s %s' % (cmd.ljust(max_cmd), value)
+
+USAGE = """
+%(script_name)s command [args] [options]
+
+Commands:
+
+%(configure)s
+
+%(stat)s
+
+%(list)s
+
+%(download)s
+
+%(upload)s
+
+%(delete)s
+
+%(versioning)s
+
+%(acl)s""".strip('\n') % usage
+
+parser = OptionParser(usage=USAGE, prog='csclient', version=version)
+
+parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
+    metavar='VERBOSE', default=False, help='write debug messages to console')
+
+parser.add_option('-c', '--configure-file', dest='cfg_file', action='store',
+    help='configure file for loading configures', metavar='FILE',
+    default=DEFAULT_CONFIG_PATH)
+
+parser.add_option('-A', '--auth', dest='auth_url', action='store',
+    metavar='AUTH', default=None, help='URL for obtaining an auth token')
+
+parser.add_option('-V', '--auth-version', dest='auth_version', action='store',
+    help='specify a version for authentication(default: 1.0)',
+    metavar='AUTH_VERSION', default='1.0')
+
+parser.add_option('-U', '--user', dest='user', action='store', metavar='USER',
+    help='user name for obtaining an auth token')
+
+parser.add_option('-K', '--key', dest='key', action='store', metavar='KEY',
+    help='key for obtaining an auth token')
+
+
+def main(argv):
+    if len(argv) < 2:
+        parser.print_usage()
+        return ERROR_CODE
+    cmd = argv[1]
+    if cmd not in CMDS:
+        parser.print_usage()
+        return ERROR_CODE
+    try:
+        return CMDS[cmd].action(parser, argv[2:])
+    except KeyboardInterrupt:
+        print >> sys.stderr, '\nAborting on User request...'
+    except AuthorizationError, e:
+        print >> sys.stderr, str(e)
+    except ServiceError, e:
+        print >> sys.stderr, str(e)
+    except Exception, e:
+        print >> sys.stderr, 'ERROR: %s' % e
+        raise
+    return ERROR_CODE
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
