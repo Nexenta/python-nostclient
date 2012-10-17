@@ -10,7 +10,7 @@ TRUE_VALUES = ('true', '1', 'yes', 'on', 't', 'y')
 
 FALSE_VALUES = ('false', '0', 'no', 'off', 'f', 'n')
 
-ACP_VALUES = ('READ', 'READ_ACP', 'WRITE', 'WRITE_ACP', 'FULL_CONTROL')
+ACP_VALUES = ('READ', 'READ_ACP', 'WRITE', 'WRITE_ACP')
 
 VERSIONING_VALUES = ('enabled', 'suspended')
 

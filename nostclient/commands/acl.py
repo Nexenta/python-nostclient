@@ -77,16 +77,26 @@ def action(parser, args):
     elif len(args) == 2:
         func = client.get_manifest_acp
         kwargs['version_id'] = options.version_id
-    status, headers, response, acp = func(*args, **kwargs)
-    typ = 'Container' if len(args) == 1 else 'Manifest'
-    out = []
-    if 'owner' in acp:
-        out.append('%s owner is %s' % (typ, acp['owner']))
-    out.append('')
-    for acl in acp.get('acl', []):
-        if not 'user' in acl or not 'permissions' in acl:
-            continue
-        out.append('%s %s' % (acl['user'], ', '.join(acl['permissions'])))
-    if out:
-        print >> sys.stdout, '\n'.join(out)
+    status, headers = func(*args, **kwargs)
+    typ = 'container' if len(args) == 1 else 'manifest'
+    if 'x-%s-owner' % typ in headers:
+        print >> sys.stdout, 'Owner: %s' % headers['x-%s-owner' % typ]
+    permissions = {}
+    for header in headers:
+        key = None
+        if typ == 'container':
+            if header in ('x-container-read', 'x-container-write'):
+                key = header[12:]
+            elif header.startswith('x-container-acl-'):
+                key = header[16:].replace('-', '_')
+        else:
+            if header.startswith('x-manifest-acl-'):
+                key = header[15:].replace('-', '_')
+        if key:
+            permissions[key] = [u.strip() for u in headers[header].split(',')
+                                if u.strip()]
+    for key, value in permissions.iteritems():
+        if value:
+            print >> sys.stdout, '%s: %s' % (key.replace('_', ' ').title(),
+                                             ', '.join(value))
     return SUCCESS_CODE

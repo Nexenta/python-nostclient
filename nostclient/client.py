@@ -1053,8 +1053,7 @@ class NSclient(object):
         :param req_url: storage URL
         :param req_auth_token: auth token
 
-        :return: a tuple of (response status, response headers (all
-                  lowercase), response object, parsed resource ACL)
+        :return: a tuple of (response status, response headers (all lowercase))
         :raises ServiceError: if ACL GET request failed
         """
         conn, path, url, auth_token = self.validate_conn(http_conn, req_url,
@@ -1070,13 +1069,12 @@ class NSclient(object):
             if version_id:
                 name += ' version id %s' % version_id
                 query += '&version_id=%s' % version_id
-        conn.request('GET', '%s?%s' % (path, query), '', headers)
+        conn.request('HEAD', '%s?%s' % (path, query), '', headers)
         response = conn.getresponse()
         if not is_success(response.status):
             raise ServiceError(response.status, response.read(),
-                               '%s %s: GET ACL failed' % (typ, name))
-        return (response.status, lower_headers(response.getheaders()),
-                response, json.loads(response.read()))
+                               '%s %s: HEAD ACL failed' % (typ, name))
+        return response.status, lower_headers(response.getheaders())
 
     def get_container_acp(self, container, http_conn=None, req_url=None,
                           req_auth_token=None):
@@ -1089,8 +1087,7 @@ class NSclient(object):
         :param req_url: storage URL
         :param req_auth_token: auth token
 
-        :return: a tuple of (response status, response headers (all
-                  lowercase), response object, parsed container ACL)
+        :return: a tuple of (response status, response headers (all lowercase))
         :raises ServiceError: if GET ACL request failed
         """
         return self._get_acp(container, http_conn=http_conn, req_url=req_url,
@@ -1109,8 +1106,7 @@ class NSclient(object):
         :param req_url: storage URL
         :param req_auth_token: auth token
 
-        :return: a tuple of (response status, response headers (all
-                  lowercase), response object, parsed manifest ACL)
+        :return: a tuple of (response status, response headers (all lowercase))
         :raises ServiceError: if GET ACL request failed
         """
         return self._get_acp(container, manifest=manifest,
@@ -1182,19 +1178,24 @@ class NSclient(object):
                                                          req_auth_token)
         typ, name = 'Container', container
         headers = {'X-Auth-Token': auth_token}
-        query = '?acl'
+        query = ''
         if container and manifest:
             typ, name = 'Manifest', name + '/' + manifest
             path = '%s/%s/%s' % (path, quote(container), quote(manifest))
-            header_prefix = 'X-Manifest-Acl-'
             headers['X-Oneput-Manifest'] = 'true'
             if version_id:
                 name += ' version id %s' % version_id
                 query += '&version_id=%s' % version_id
         else:
             path = '%s/%s' % (path, quote(container))
-            header_prefix = 'X-Container-Acl-'
         for permission, users in perm2users.items():
+            if not manifest:
+                if permission == 'WRITE':
+                    header_prefix = 'X-Container-'
+                else:
+                    header_prefix = 'X-Container-Acl-'
+            else:
+                header_prefix = 'X-Manifest-Acl-'
             header = header_prefix + permission.replace('_', '-').title()
             headers[header] = ','.join(users)
         conn.request('POST', path + query, '', headers)
