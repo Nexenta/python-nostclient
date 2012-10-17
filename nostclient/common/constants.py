@@ -14,10 +14,6 @@ ACP_VALUES = ('READ', 'READ_ACP', 'WRITE', 'WRITE_ACP')
 
 VERSIONING_VALUES = ('enabled', 'suspended')
 
-CANNED_ACP_VALUES = ('private', 'public-read', 'public-read-write',
-                     'authenticated-read', 'container-owner-read',
-                     'container-owner-full-control')
-
 # default authorization url
 DEFAULT_AUTH_URL = 'http://127.0.0.1:8080/auth/v1.0/'
 # default config file path

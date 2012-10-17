@@ -469,7 +469,6 @@ class NSclient(object):
         conn.endheaders()
         resp = conn.getexpect()
         if resp.status != HTTP_CONTINUE:
-            conn.getresponse()
             if callback:
                 callback(content_length)
         else:
@@ -556,6 +555,7 @@ class NSclient(object):
                                  req_auth_token=auth_token)
         etag = md5()
         content_length = 0
+        workers_exceptions = []
         manifest = {'chunks': []}
         chunk_queue = None
         if workers != 1:
@@ -563,12 +563,15 @@ class NSclient(object):
 
         def _upload_chunk(buf, offset, http_conn=None, req_url=None,
                           req_auth_token=None):
-            id, size = self.put_chunk(
-                container, obj, buf, session_id, session_timestamp,
-                http_conn=http_conn, req_url=req_url,
-                req_auth_token=req_auth_token, callback=callback)
-            manifest['chunks'].append({'hash': id, 'size': size,
-                                       'offset': offset})
+            try:
+                id, size = self.put_chunk(
+                    container, obj, buf, session_id, session_timestamp,
+                    http_conn=http_conn, req_url=req_url,
+                    req_auth_token=req_auth_token, callback=callback)
+                manifest['chunks'].append({'hash': id, 'size': size,
+                                           'offset': offset})
+            except Exception, e:
+                workers_exceptions.append(e)
 
         if chunk_queue:
             chunk_threads = [
@@ -605,9 +608,15 @@ class NSclient(object):
                         etag.update(buf)
                         content_length += len(buf)
                         buf = remainder
+                    if workers_exceptions:
+                        raise ServiceError(
+                            msg='Exception in chunk upload thread')
             if chunk_queue:
                 while not chunk_queue.empty():
                     sleep(0.01)
+            if workers_exceptions:
+                raise ServiceError(
+                    msg='Exception in chunk upload thread')
         except (KeyboardInterrupt, Exception), e:
             if error_callback:
                 error_callback()

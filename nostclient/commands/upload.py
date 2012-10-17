@@ -7,8 +7,8 @@ import optparse
 from nostclient.client import NSclient
 from nostclient.common.config import Config
 from nostclient.common.progressbar import ProgressBar
-from nostclient.common.constants import SUCCESS_CODE, ERROR_CODE, \
-    CANNED_ACP_VALUES, MiB, SCRIPT_NAME
+from nostclient.common.constants import SUCCESS_CODE, ERROR_CODE, MiB, \
+    SCRIPT_NAME
 from nostclient.common.utils import validate_path, validate_obj_name
 
 
@@ -52,8 +52,6 @@ def action(parser, args):
                      help='number of workers threads')
     group.add_option('-q', '--quite', dest='quite', action='store_true',
                      default=False, help='hide progress bar')
-    group.add_option('--canned-acp', dest='acp', action='store',
-                     help='to set canned acl')
     parser.add_option_group(group)
     parser.usage = USAGE
     (options, args) = parser.parse_args(args)
@@ -73,16 +71,6 @@ def action(parser, args):
         return SUCCESS_CODE
 
     headers = {}
-    if options.acp:
-        if len(args) == 1:
-            acp_values = CANNED_ACP_VALUES[:-2]
-        else:
-            acp_values = CANNED_ACP_VALUES
-        if not options.acp in acp_values:
-            print >> sys.stderr, 'ERROR: Invalid canned ACL value %s' % \
-                                 options.acp
-            return ERROR_CODE
-        headers['X-Canned-ACL'] = options.acp
 
     # PUT container
     if len(args) == 1:
