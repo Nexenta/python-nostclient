@@ -703,7 +703,7 @@ class NSclient(object):
         path = '%s/%s/%s' % (path, quote(container), quote(manifest))
         query = ''
         if version_id:
-            query = '?version_id=%s' % quote(version_id)
+            query = '?versionId=%s' % quote(version_id)
         headers = {'X-Auth-Token': auth_token, 'X-Oneput-Manifest': 'true'}
         conn.request('HEAD', path + query, '', headers)
         response = conn.getresponse()
@@ -861,7 +861,7 @@ class NSclient(object):
         headers = {'X-Auth-Token': auth_token, 'X-Oneput-Manifest': 'true'}
         query = '?format=json'
         if version_id:
-            query += '&version_id=%s' % quote(version_id)
+            query += '&versionId=%s' % quote(version_id)
         conn.request('GET', path + query, '', headers)
         resp = conn.getresponse()
         if not is_success(resp.status):
@@ -1077,7 +1077,7 @@ class NSclient(object):
             headers['X-Oneput-Manifest'] = 'true'
             if version_id:
                 name += ' version id %s' % version_id
-                query += '&version_id=%s' % version_id
+                query += '&versionId=%s' % version_id
         conn.request('HEAD', '%s?%s' % (path, query), '', headers)
         response = conn.getresponse()
         if not is_success(response.status):
@@ -1194,7 +1194,7 @@ class NSclient(object):
             headers['X-Oneput-Manifest'] = 'true'
             if version_id:
                 name += ' version id %s' % version_id
-                query += '&version_id=%s' % version_id
+                query += '&versionId=%s' % version_id
         else:
             path = '%s/%s' % (path, quote(container))
         for permission, users in perm2users.items():
@@ -1325,7 +1325,7 @@ class NSclient(object):
         path = '%s/%s/%s' % (path, quote(container), quote(manifest))
         query = ''
         if version_id:
-            query = '?version_id=%s' % quote(version_id)
+            query = '?versionId=%s' % quote(version_id)
         conn.request('DELETE', path + query, '', {'X-Auth-Token': auth_token})
         response = conn.getresponse()
         if not is_success(response.status):
