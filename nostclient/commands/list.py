@@ -94,7 +94,7 @@ def action(parser, args):
             s = manifest.get('name', manifest.get('subdir'))
             if 'version_id' in manifest:
                 s += ' ' + manifest['version_id']
-            if manifest['deleted']:
+            if manifest.get('deleted'):
                 s += ' deleted'
             out.append(s)
     else:
