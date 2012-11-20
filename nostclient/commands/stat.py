@@ -37,6 +37,7 @@ def action(parser, args):
     if len(args) < 2 and options.version_id:
         print >> sys.stderr, 'ERROR: --version-id allowed only for object'
         return ERROR_CODE
+    kwargs = {}
     if not args:
         prefix = 'x-account-'
         func = client.stat_account
@@ -46,7 +47,7 @@ def action(parser, args):
     elif len(args) == 2:
         prefix = 'x-manifest-'
         func = client.stat_manifest
-    kwargs = {'version_id': options.version_id}
+        kwargs['version_id'] = options.version_id
     status, headers, response = func(*args, **kwargs)
     if not is_success(status):
         print >> sys.stderr, response.read()
