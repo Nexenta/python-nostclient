@@ -46,7 +46,8 @@ def action(parser, args):
     elif len(args) == 2:
         prefix = 'x-manifest-'
         func = client.stat_manifest
-    status, headers, response = func(*args)
+    kwargs = {'version_id': options.version_id}
+    status, headers, response = func(*args, **kwargs)
     if not is_success(status):
         print >> sys.stderr, response.read()
         return ERROR_CODE
