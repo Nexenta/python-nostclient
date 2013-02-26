@@ -213,6 +213,7 @@ class ProgressBar(object):
             if self._value >= self._max_value:
                 self._finished = True
         tmpl = '%s\n' if self._finished else '%s\r'
+        self.last_length = len(tmpl)
         self._lock.acquire()
         if self._draw or (self._max_value and self._finished):
             self._fd.write(tmpl % self._format_components())
@@ -225,6 +226,7 @@ class ProgressBar(object):
 
     def clear(self):
         self._draw = False
+        self._fd.write('%s\r' % (' ' * self.last_length))
 
     def start(self):
         """ Start progress """

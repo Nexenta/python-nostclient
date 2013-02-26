@@ -61,24 +61,26 @@ Commands:
 parser = OptionParser(usage=USAGE, prog='nostclient', version=version)
 
 parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
-    metavar='VERBOSE', default=False, help='write debug messages to console')
+                  metavar='VERBOSE', default=False,
+                  help='write debug messages to console')
 
 parser.add_option('-c', '--configure-file', dest='cfg_file', action='store',
-    help='configure file for loading configures', metavar='FILE',
-    default=DEFAULT_CONFIG_PATH)
+                  help='configure file for loading configures', metavar='FILE',
+                  default=DEFAULT_CONFIG_PATH)
 
 parser.add_option('-A', '--auth', dest='auth_url', action='store',
-    metavar='AUTH', default=None, help='URL for obtaining an auth token')
+                  metavar='AUTH', default=None,
+                  help='URL for obtaining an auth token')
 
 parser.add_option('-V', '--auth-version', dest='auth_version', action='store',
-    help='specify a version for authentication(default: 1.0)',
-    metavar='AUTH_VERSION', default='1.0')
+                  help='specify a version for authentication(default: 1.0)',
+                  metavar='AUTH_VERSION', default='1.0')
 
 parser.add_option('-U', '--user', dest='user', action='store', metavar='USER',
-    help='user name for obtaining an auth token')
+                  help='user name for obtaining an auth token')
 
 parser.add_option('-K', '--key', dest='key', action='store', metavar='KEY',
-    help='key for obtaining an auth token')
+                  help='key for obtaining an auth token')
 
 
 def main(argv):

@@ -21,6 +21,7 @@ class ConfigData(object):
     auth_version = '1.0'
     user = ''
     key = ''
+    fingerprint_algo = 'sha512'
 
     network_chunk_size = NETWORK_CHUNK_SIZE
     disk_chunk_size = DISK_CHUNK_SIZE

@@ -104,8 +104,7 @@ def action(parser, args):
         if isdir:
             client.put_directory(container_name, name + '/')
             continue
-        kwargs = {'chunk_size': options.chunk_size,
-                  'workers': options.workers}
+        kwargs = {'chunk_size': options.chunk_size, 'workers': options.workers}
         info = os.stat(path)
         bar = ProgressBar(max_value=info.st_size, title=name,
                           quite=options.quite)

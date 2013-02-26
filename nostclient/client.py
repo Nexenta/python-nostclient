@@ -4,10 +4,11 @@ from __future__ import with_statement
 
 import os
 import sys
+import hashlib
 from time import sleep
 from threading import Thread
 from Queue import Empty, Queue
-from hashlib import sha256, md5
+from hashlib import md5
 from urlparse import urlparse, urljoin
 from urllib import unquote, quote as ulquote
 
@@ -76,8 +77,8 @@ class QueueFunctionThread(Thread):
         conn, path, url, auth_token = \
             self.client.validate_conn(self.http_conn, self.req_url,
                                       self.req_auth_token)
-        kwargs = {'http_conn': conn, 'req_url': url,
-                  'req_auth_token': auth_token}
+        # TODO: maybe pass conn to kwargs, etc reuse http connection object
+        kwargs = {'req_url': url, 'req_auth_token': auth_token}
         while True:
             try:
                 args = self.queue.get_nowait()
@@ -182,7 +183,8 @@ class NSclient(object):
                  proxy_host=None, proxy_port=None, proxy_user=None,
                  proxy_pass=None, disk_chunk_size=DISK_CHUNK_SIZE,
                  network_chunk_size=NETWORK_CHUNK_SIZE, debug=False,
-                 http_connection_factory=http_connection):
+                 http_connection_factory=http_connection,
+                 fingerprint_algo='sha512'):
         self.auth_url = auth_url
         self.auth_version = auth_version
         self.user = user
@@ -195,6 +197,7 @@ class NSclient(object):
         self.network_chunk_size = network_chunk_size
         self.debug = debug
         self.http_connection_factory = http_connection_factory
+        self.fingerprint_func = getattr(hashlib, fingerprint_algo)
 
     def validate_conn(self, conn=None, storage_url=None, auth_token=None):
         """
@@ -259,10 +262,10 @@ class NSclient(object):
                             if endpoint['region'] == region:
                                 url = endpoint['publicURL']
                         if not url:
-                            raise ServiceError(resp.status, body,
-                                               'There is no object-store '
-                                               'endpoint for region %s.' %
-                                               region)
+                            raise ServiceError(
+                                resp.status, body,
+                                'There is no object-store endpoint for '
+                                'region %s.' % region)
                     else:
                         url = endpoints[0]['publicURL']
             token_id = body['access']['token']['id']
@@ -447,7 +450,7 @@ class NSclient(object):
         if hasattr(content, 'read'):
             content = content.read()
         etag = md5(content).hexdigest()
-        id = sha256(content).hexdigest()
+        id = self.fingerprint_func(content).hexdigest()
         content_length = len(content)
         path = '/chunk/%s/%s/%s/%s' % (path.strip('/'), quote(container),
                                        quote(manifest), quote(id))
@@ -615,8 +618,7 @@ class NSclient(object):
                 while not chunk_queue.empty():
                     sleep(0.01)
             if workers_exceptions:
-                raise ServiceError(
-                    msg='Exception in chunk upload thread')
+                raise ServiceError(msg='Exception in chunk upload thread')
         except (KeyboardInterrupt, Exception), e:
             if error_callback:
                 error_callback()
